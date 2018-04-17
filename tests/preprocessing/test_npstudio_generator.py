@@ -49,5 +49,7 @@ def test_npstudio_generator():
         cv2.imwrite("/home/keyong/test/%5d.jpg" %(i),image)
         #break
 
+    print("label: "+str(generator.labels))
+
 
 

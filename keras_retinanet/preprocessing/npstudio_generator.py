@@ -65,6 +65,7 @@ def _parse(value, function, fmt):
 
 def _read_classes(csv_reader):
     result = {}
+    result["background"] = 0
     for line, row in enumerate(csv_reader):
         try:
             # class_name, class_id = row
@@ -133,6 +134,7 @@ class NPStudioGenerator(Generator):
         return len(self.image_instruction)
 
     def num_classes(self):
+        #return max(self.classes.values()) + 1
         return max(self.classes.values()) + 1
 
     def name_to_label(self, name):
