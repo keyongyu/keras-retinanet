@@ -42,6 +42,7 @@ from ..preprocessing.pascal_voc import PascalVocGenerator
 from ..preprocessing.csv_generator import CSVGenerator
 from ..preprocessing.kitti import KittiGenerator
 from ..preprocessing.open_images import OpenImagesGenerator
+from ..preprocessing.npstudio_generator import NPStudioGenerator
 from ..utils.transform import random_transform_generator
 from ..utils.keras_version import check_keras_version
 from ..utils.anchors import make_shapes_callback, anchor_targets_bbox
@@ -259,6 +260,19 @@ def create_generators(args):
             subset='val',
             batch_size=args.batch_size
         )
+    elif args.dataset_type == 'npstudio':
+        train_generator = NPStudioGenerator(
+            args.main_dir,
+            subset='train',
+            transform_generator=transform_generator,
+            batch_size=args.batch_size
+        )
+
+        validation_generator = NPStudioGenerator(
+            args.main_dir,
+            subset='validation',
+            batch_size=args.batch_size
+        )
     else:
         raise ValueError('Invalid data type received: {}'.format(args.dataset_type))
 
@@ -330,6 +344,9 @@ def parse_args(args):
     oid_parser.add_argument('--labels-filter',  help='A list of labels to filter.', type=csv_list, default=None)
     oid_parser.add_argument('--annotation-cache-dir', help='Path to store annotation cache.', default='.')
     oid_parser.add_argument('--fixed-labels', help='Use the exact specified labels.', default=False)
+
+    npstudio_parser = subparsers.add_parser('npstudio')
+    npstudio_parser.add_argument('main_dir', help='Path to dataset directory.')
 
     csv_parser = subparsers.add_parser('csv')
     csv_parser.add_argument('annotations', help='Path to CSV file containing annotations for training.')
@@ -435,6 +452,8 @@ def main(args=None):
         epochs=args.epochs,
         verbose=1,
         callbacks=callbacks,
+        max_queue_size=10,
+        workers=4
     )
 
 if __name__ == '__main__':
